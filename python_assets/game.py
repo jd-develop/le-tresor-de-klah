@@ -49,7 +49,7 @@ class Game:
             if sprite.feet.collidelist(self.walls) > -1:
                 sprite.move_back()
     
-    def hundle_input(self):
+    def handle_input(self):
         pressed = pygame.key.get_pressed()
 
         if pressed[pygame.K_z] or pressed[pygame.K_UP]:
@@ -73,7 +73,7 @@ class Game:
         
         while running:
             self.player.save_location()
-            self.hundle_input()
+            self.handle_input()
             self.update()
             self.group.center(self.player.rect.center)
             self.group.draw(self.screen)
@@ -89,7 +89,7 @@ class Game:
                         width = 800
                     if height < 600:
                         height = 600
-                    self.screen = pygame.display.set_mode((width,height), locals.RESIZABLE)
+                    self.screen = pygame.display.set_mode((width, height), locals.RESIZABLE)
                     self.map_layer.set_size(self.screen.get_size())
 
             clock.tick(self.FPS)
