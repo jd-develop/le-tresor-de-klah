@@ -37,14 +37,14 @@ class Game:
             if obj.type == "collision":
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
         
-        # dessiner le goupe de calques
+        # dessiner le groupe de calques
         self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=1)
         self.group.add(self.player)
     
     def update(self):
         self.group.update()
 
-        # vérif collision
+        # vérification des collisions
         for sprite in self.group.sprites():
             if sprite.feet.collidelist(self.walls) > -1:
                 sprite.move_back()
