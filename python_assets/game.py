@@ -77,7 +77,7 @@ class Game:
             self.update()
             self.group.center(self.player.rect.center)
             self.group.draw(self.screen)
-            self.screen.blit(self.pixel_verdana.render(self.version, False, (0, 0, 0)), (0, 0))
+            self.screen.blit(self.pixel_verdana.render("Trésor de Klah " + self.version, False, (0, 0, 0)), (0, 0))
             pygame.display.flip()
 
             for event in pygame.event.get():
