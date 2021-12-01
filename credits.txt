@@ -1,15 +1,19 @@
-== DEVELOPPEMENT ==
+== DEV ==
 Jean Dubois
 
 == DESIGNERS ==
 Raitwag ce bg
 Stealthix : https://stealthix.itch.io/
+Maschiat : maschiaT@wememo.art
 
-== MUSIQUE ==
+== MUSIC ==
 CrystalZone : https://crystalzone.itch.io/
 
-== POLICE D'ÉCRITURE ==
+== FONT ==
 PixelFJVerdana par flashjunior sur 1001-fonts
 
-== CONLANGEUR (LANGUE DE KLAH) ==
+== CONLANGER (KLAH'S LANGUAGE) ==
 Jean Dubois
+
+
+Thanks to everyone !!

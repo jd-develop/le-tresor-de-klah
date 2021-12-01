@@ -9,6 +9,7 @@ class Player(pygame.sprite.Sprite):
         self.sprite_sheet = pygame.image.load("assets/player.png")
         self.image = self.get_image(0, 0)
         self.image.set_colorkey([255, 0, 255])
+        self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect()
         self.position = [x, y]
         self.images = {
@@ -27,6 +28,7 @@ class Player(pygame.sprite.Sprite):
     def change_animation(self, name):
         self.image = self.images.get(name)
         self.image.set_colorkey([255, 0, 255])
+        self.image = pygame.transform.scale(self.image, (30, 30))
     
     def move_right(self): self.position[0] += self.speed
 

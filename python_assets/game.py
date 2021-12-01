@@ -20,24 +20,36 @@ class Game:
         self.pixel_verdana = pygame.font.Font("assets/fonts/PixelFJVerdana12pt.ttf", 12)
 
         # charger la carte
-        tmx_data = pytmx.util_pygame.load_pygame("assets/maps/spawn.tmx")
-        map_data = pyscroll.data.TiledMapData(tmx_data)
-        self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
+        self.tmx_data = pytmx.util_pygame.load_pygame("assets/maps/spawn.tmx")
+        self.map_data = pyscroll.data.TiledMapData(self.tmx_data)
+        self.map_layer = pyscroll.orthographic.BufferedRenderer(self.map_data, self.screen.get_size())
         self.map_layer.zoom = 2
         self.map = "spawn"
 
         # générer un joueur
-        player_position = tmx_data.get_object_by_id(1)
+        player_position = self.tmx_data.get_object_by_name("playerspawn")
         self.player = player.Player(player_position.x, player_position.y)
+        self.inventory = []
 
         # liste de collisions
         self.walls = []
+        self.coins = []
+        self.found_coins = {
+            "spawn": [],
+            "village": []
+        }
 
-        for obj in tmx_data.objects:
+        for obj in self.tmx_data.objects:
             if obj.type == "collision":
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
-        
-        # dessiner le groupe de calques
+            if obj.name == "coin":
+                self.coins.append(
+                    {
+                        "pos": (obj.x, obj.y),
+                        "id": obj.id
+                    }
+                )
+
         self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=2)
         self.group.add(self.player)
     
@@ -46,8 +58,16 @@ class Game:
 
         # vérification des collisions
         for sprite in self.group.sprites():
+            # objets collisions
             if sprite.feet.collidelist(self.walls) > -1:
                 sprite.move_back()
+            # ITEMS
+            # pièces
+            for e in self.coins:
+                if sprite.rect.collidepoint(e.get("pos")) and not e.get("id") in self.found_coins.get(self.map):
+                    print("vous avez trouvé une pièce !")
+                    self.found_coins.get(self.map).append(e.get("id"))
+                    self.change_map("village")
     
     def handle_input(self):
         pressed = pygame.key.get_pressed()
@@ -64,6 +84,14 @@ class Game:
         elif pressed[pygame.K_q] or pressed[pygame.K_LEFT]:
             self.player.change_animation("left")
             self.player.move_left()
+
+    def change_map(self, map_name: str = "spawn"):
+        # charger la carte
+        self.tmx_data = pytmx.util_pygame.load_pygame(f"assets/maps/{map_name}.tmx")
+        self.map_data = pyscroll.data.TiledMapData(self.tmx_data)
+        self.map_layer = pyscroll.orthographic.BufferedRenderer(self.map_data, self.screen.get_size())
+        self.map_layer.zoom = 2
+        self.map = map_name
     
     def run(self):
         mixer.music.load("assets/music/CrystalZone - Focus.ogg")
