@@ -63,11 +63,10 @@ class Game:
                 sprite.move_back()
             # ITEMS
             # pièces
-            for e in self.coins:
-                if sprite.rect.collidepoint(e.get("pos")) and not e.get("id") in self.found_coins.get(self.map):
+            for coin in self.coins:
+                if sprite.rect.collidepoint(coin.get("pos")) and not coin.get("id") in self.found_coins.get(self.map):
                     print("vous avez trouvé une pièce !")
-                    self.found_coins.get(self.map).append(e.get("id"))
-                    self.change_map("village")
+                    self.found_coins.get(self.map).append(coin.get("id"))
     
     def handle_input(self):
         pressed = pygame.key.get_pressed()
@@ -84,6 +83,8 @@ class Game:
         elif pressed[pygame.K_q] or pressed[pygame.K_LEFT]:
             self.player.change_animation("left")
             self.player.move_left()
+        elif pressed[pygame.K_e]:
+            print(self.map)
 
     def change_map(self, map_name: str = "spawn"):
         # charger la carte
