@@ -6,7 +6,10 @@ from pygame import locals
 import pytmx
 import pyscroll
 
+import random
+
 from python_assets import player
+from python_assets import item
 
 
 class Game:
@@ -29,80 +32,51 @@ class Game:
         # générer un joueur
         player_position = self.tmx_data.get_object_by_name("playerspawn")
         self.player = player.Player(player_position.x, player_position.y)
-        self.inventory = []
+        self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=2)
+        self.group.add(self.player)
 
-        # liste de collisions
+        # liste de collisions + items
         self.walls = []
-        self.coins = []
-        self.found_coins = {
-            "spawn": [],
-            "village": []
-        }
-        self.apples = []
-        self.found_apples = {
-            "spawn": [],
-            "village": []
-        }
-        self.dictionaries = []
-        self.found_dictionaries = {
-            "spawn": [],
-            "village": []
-        }
-
+        self.items = []
         for obj in self.tmx_data.objects:
             if obj.type == "collision":
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
             if obj.name == "coin":
-                self.coins.append(
-                    {
-                        "pos": (obj.x, obj.y),
-                        "id": obj.id
-                    }
-                )
+                coin = item.Item(obj.x, obj.y, 'purse', loot={'coin': random.randint(5, 10)})
+                self.group.add(coin)
+                self.items.append(coin)
             elif obj.name == "apple":
-                self.apples.append(
-                    {
-                        "pos": (obj.x, obj.y),
-                        "id": obj.id
-                    }
-                )
+                apple = item.Item(obj.x, obj.y, 'food/redapple', loot={'apple': 1})
+                self.group.add(apple)
+                self.items.append(apple)
             elif obj.name == "dictionary":
-                self.dictionaries.append(
-                    {
-                        "pos": (obj.x, obj.y),
-                        "id": obj.id
-                    }
-                )
-
-        self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=2)
-        self.group.add(self.player)
+                dictionary = item.Item(obj.x, obj.y, 'books/book14', outline='normal', loot={'dictionary': 1})
+                self.group.add(dictionary)
+                self.items.append(dictionary)
+            elif obj.name == "rock":
+                rock = item.Item(obj.x, obj.y, 'rock', loot={'rock': 1})
+                self.group.add(rock)
+                self.items.append(rock)
     
     def update(self):
         self.group.update()
 
         # vérification des collisions
         for sprite in self.group.sprites():
-            # objets collisions
-            if sprite.feet.collidelist(self.walls) > -1:
-                sprite.move_back()
-            # ITEMS
-            # pièces
-            for coin in self.coins:
-                if sprite.rect.collidepoint(coin.get("pos")) and not coin.get("id") in self.found_coins.get(self.map):
-                    print("vous avez trouvé une pièce !")
-                    self.found_coins.get(self.map).append(coin.get("id"))
-            # pommes
-            for apple in self.apples:
-                if sprite.rect.collidepoint(apple.get("pos"))\
-                        and not apple.get("id") in self.found_apples.get(self.map):
-                    print("vous avez trouvé une pomme !")
-                    self.found_apples.get(self.map).append(apple.get("id"))
-            # dictionary
-            for dictionary in self.dictionaries:
-                if sprite.rect.collidepoint(dictionary.get("pos")) \
-                        and not dictionary.get("id") in self.found_dictionaries.get(self.map):
-                    print("vous avez trouvé le dictionnaire !")
-                    self.found_dictionaries.get(self.map).append(dictionary.get("id"))
+            if isinstance(sprite, player.Player):
+                # objets collisions
+                if sprite.feet.collidelist(self.walls) > -1:
+                    sprite.move_back()
+                # ITEMS
+                items_collided = sprite.rect.collidelistall(self.items)
+                if len(items_collided) > 0:
+                    indexes = []
+                    for item_idx in items_collided:
+                        item_ = self.items[item_idx]
+                        self.group.remove(item_)
+                        self.player.loot(item_.loot)
+                        indexes.append(item_idx)
+                    self.items = [e for i, e in enumerate(self.items) if i not in indexes]
 
     def handle_input(self):
         pressed = pygame.key.get_pressed()
@@ -119,8 +93,10 @@ class Game:
         elif pressed[pygame.K_q] or pressed[pygame.K_LEFT]:
             self.player.change_animation("left")
             self.player.move_left()
-        elif pressed[pygame.K_e]:
+        elif pressed[pygame.K_m]:
             print(self.map)
+        elif pressed[pygame.K_e]:
+            print(self.player.inventory)
 
     def change_map(self, map_name: str = "spawn"):
         # charger la carte

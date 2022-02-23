@@ -21,7 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.feet = pygame.Rect(0, 0, self.rect.width / 2, 12)
         self.old_position = self.position.copy()
         self.speed = 1.5
-        self.inventory = [["apple", 1], ["coin", 5]]
+        self.inventory = {}
 
     def save_location(self): self.old_position = self.position.copy()
 
@@ -51,3 +51,10 @@ class Player(pygame.sprite.Sprite):
         image = pygame.Surface([32, 32])
         image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
         return image
+
+    def loot(self, loot):
+        for item in loot:
+            try:
+                self.inventory[item] += loot[item]
+            except KeyError:
+                self.inventory[item] = loot[item]
