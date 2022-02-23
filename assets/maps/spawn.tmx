@@ -222,7 +222,7 @@
   <object id="1" name="playerspawn" x="399.333" y="430">
    <point/>
   </object>
-  <object id="2" name="dictionnary" type="item" x="160.682" y="687.682">
+  <object id="2" name="dictionary" type="item" x="160.682" y="687.682">
    <point/>
   </object>
   <object id="3" name="apple" type="item" x="335.5" y="169.5">

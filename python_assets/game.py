@@ -38,12 +38,36 @@ class Game:
             "spawn": [],
             "village": []
         }
+        self.apples = []
+        self.found_apples = {
+            "spawn": [],
+            "village": []
+        }
+        self.dictionaries = []
+        self.found_dictionaries = {
+            "spawn": [],
+            "village": []
+        }
 
         for obj in self.tmx_data.objects:
             if obj.type == "collision":
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
             if obj.name == "coin":
                 self.coins.append(
+                    {
+                        "pos": (obj.x, obj.y),
+                        "id": obj.id
+                    }
+                )
+            elif obj.name == "apple":
+                self.apples.append(
+                    {
+                        "pos": (obj.x, obj.y),
+                        "id": obj.id
+                    }
+                )
+            elif obj.name == "dictionary":
+                self.dictionaries.append(
                     {
                         "pos": (obj.x, obj.y),
                         "id": obj.id
@@ -67,7 +91,19 @@ class Game:
                 if sprite.rect.collidepoint(coin.get("pos")) and not coin.get("id") in self.found_coins.get(self.map):
                     print("vous avez trouvé une pièce !")
                     self.found_coins.get(self.map).append(coin.get("id"))
-    
+            # pommes
+            for apple in self.apples:
+                if sprite.rect.collidepoint(apple.get("pos"))\
+                        and not apple.get("id") in self.found_apples.get(self.map):
+                    print("vous avez trouvé une pomme !")
+                    self.found_apples.get(self.map).append(apple.get("id"))
+            # dictionary
+            for dictionary in self.dictionaries:
+                if sprite.rect.collidepoint(dictionary.get("pos")) \
+                        and not dictionary.get("id") in self.found_dictionaries.get(self.map):
+                    print("vous avez trouvé le dictionnaire !")
+                    self.found_dictionaries.get(self.map).append(dictionary.get("id"))
+
     def handle_input(self):
         pressed = pygame.key.get_pressed()
 
