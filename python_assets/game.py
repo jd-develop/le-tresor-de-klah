@@ -22,6 +22,8 @@ class Game:
         pygame.font.init()
         self.pixel_verdana = pygame.font.Font("assets/fonts/PixelFJVerdana12pt.ttf", 12)
 
+        self.last_action = "nothing here :)"
+
         # charger la carte
         self.tmx_data = pytmx.util_pygame.load_pygame("assets/maps/spawn.tmx")
         self.map_data = pyscroll.data.TiledMapData(self.tmx_data)
@@ -42,7 +44,14 @@ class Game:
             if obj.type == "collision":
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
             if obj.name == "coin":
-                coin = item.Item(obj.x, obj.y, 'purse', loot={'coin': random.randint(5, 10)})
+                coin = item.Item(obj.x, obj.y, 'purse', loot={
+                    'coin': random.randint(5, 10),
+                    'emerald': 0 if random.randint(1, 10) != 1 else random.randint(1, 5),
+                    'mushroom': 0 if random.randint(1, 5) != 1 else random.randint(0, 10),
+                    'bone': 0 if random.randint(1, 20) != 1 else random.randint(0, 1),
+                    'cheese': 0 if random.randint(1, 100) != 1 else random.randint(0, 1)
+                }
+                                 )
                 self.group.add(coin)
                 self.items.append(coin)
             elif obj.name == "apple":
@@ -57,7 +66,7 @@ class Game:
                 rock = item.Item(obj.x, obj.y, 'rock', loot={'rock': 1})
                 self.group.add(rock)
                 self.items.append(rock)
-    
+
     def update(self):
         self.group.update()
 
@@ -75,6 +84,11 @@ class Game:
                         item_ = self.items[item_idx]
                         self.group.remove(item_)
                         self.player.loot(item_.loot)
+                        loot = {}
+                        for loot_ in item_.loot:
+                            if item_.loot[loot_] != 0:
+                                loot[loot_] = item_.loot[loot_]
+                        self.last_action = ', '.join(f"{x} +{loot[x]}" for x in loot)
                         indexes.append(item_idx)
                     self.items = [e for i, e in enumerate(self.items) if i not in indexes]
 
@@ -105,20 +119,21 @@ class Game:
         self.map_layer = pyscroll.orthographic.BufferedRenderer(self.map_data, self.screen.get_size())
         self.map_layer.zoom = 2
         self.map = map_name
-    
+
     def run(self):
         mixer.music.load("assets/music/CrystalZone - Focus.ogg")
         mixer.music.play(-1)
         running = True
         clock = pygame.time.Clock()
-        
+
         while running:
             self.player.save_location()
             self.handle_input()
             self.update()
             self.group.center(self.player.rect.center)
             self.group.draw(self.screen)
-            self.screen.blit(self.pixel_verdana.render("Trésor de Klah " + self.version, False, (0, 0, 0)), (0, 0))
+            self.screen.blit(self.pixel_verdana.render("Trésor de Klah " + self.version, False, (0, 0, 0)), (5, 0))
+            self.screen.blit(self.pixel_verdana.render(f"Last action: {self.last_action}", False, (0, 0, 0)), (5, 25))
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -134,5 +149,5 @@ class Game:
                     self.map_layer.set_size(self.screen.get_size())
 
             clock.tick(self.FPS)
-        
+
         pygame.quit()
