@@ -59,7 +59,11 @@ class Game:
                 self.group.add(apple)
                 self.items.append(apple)
             elif obj.name == "dictionary":
-                dictionary = item.Item(obj.x, obj.y, 'books/book14', outline='normal', loot={'dictionary': 1})
+                dictionary = item.Item(obj.x, obj.y, 'books/book14', loot={'dictionary': 1})
+                self.group.add(dictionary)
+                self.items.append(dictionary)
+            elif obj.name == "map":
+                dictionary = item.Item(obj.x, obj.y, 'parchment2', loot={'map': 1})
                 self.group.add(dictionary)
                 self.items.append(dictionary)
             elif obj.name == "rock":

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="90">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="91">
  <tileset firstgid="1" source="tilesets_xml/natureset.tsx"/>
  <tileset firstgid="721" source="tilesets_xml/automnset.tsx"/>
  <layer id="1" name="background" width="50" height="50">
@@ -329,6 +329,9 @@
    <point/>
   </object>
   <object id="89" name="rock" x="487" y="64">
+   <point/>
+  </object>
+  <object id="90" name="map" x="463.818" y="188.545">
    <point/>
   </object>
  </objectgroup>

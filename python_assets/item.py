@@ -4,7 +4,7 @@ import pygame
 
 
 class Item(pygame.sprite.Sprite):
-    def __init__(self, x, y, type_='food/redapple', outline='black_outline', ext='png', loot: dict = None,
+    def __init__(self, x, y, type_='food/redapple', outline='normal', ext='png', loot: dict = None,
                  color_key: list = None):
         super().__init__()
         if loot is None:
