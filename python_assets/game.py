@@ -12,10 +12,20 @@ from python_assets import player
 from python_assets import item
 
 
+STATES = {
+    "playing": 0,
+    "inventory_ui": 1,
+    "map_ui": 2
+}
+
+
 class Game:
     def __init__(self, version) -> None:
-        self.version = version
         self.FPS = 60
+
+        self.version = version
+        self.state = STATES["playing"]
+
         self.screen = pygame.display.set_mode((800, 600), locals.RESIZABLE)
         pygame.display.set_caption("Le trésor de Klah")
 
@@ -99,22 +109,19 @@ class Game:
     def handle_input(self):
         pressed = pygame.key.get_pressed()
 
-        if pressed[pygame.K_z] or pressed[pygame.K_UP]:
-            self.player.change_animation("up")
-            self.player.move_up()
-        elif pressed[pygame.K_s] or pressed[pygame.K_DOWN]:
-            self.player.change_animation("down")
-            self.player.move_down()
-        elif pressed[pygame.K_d] or pressed[pygame.K_RIGHT]:
-            self.player.change_animation("right")
-            self.player.move_right()
-        elif pressed[pygame.K_q] or pressed[pygame.K_LEFT]:
-            self.player.change_animation("left")
-            self.player.move_left()
-        elif pressed[pygame.K_m]:
-            print(self.map)
-        elif pressed[pygame.K_e]:
-            print(self.player.inventory)
+        if self.state == STATES["playing"]:
+            if pressed[pygame.K_z] or pressed[pygame.K_UP]:
+                self.player.change_animation("up")
+                self.player.move_up()
+            elif pressed[pygame.K_s] or pressed[pygame.K_DOWN]:
+                self.player.change_animation("down")
+                self.player.move_down()
+            elif pressed[pygame.K_d] or pressed[pygame.K_RIGHT]:
+                self.player.change_animation("right")
+                self.player.move_right()
+            elif pressed[pygame.K_q] or pressed[pygame.K_LEFT]:
+                self.player.change_animation("left")
+                self.player.move_left()
 
     def change_map(self, map_name: str = "spawn"):
         # charger la carte
@@ -151,6 +158,22 @@ class Game:
                         height = 600
                     self.screen = pygame.display.set_mode((width, height), locals.RESIZABLE)
                     self.map_layer.set_size(self.screen.get_size())
+                elif event.type == pygame.KEYUP:
+                    if self.state == STATES['playing']:
+                        if event.key == pygame.K_e:
+                            print(self.player.inventory)  # OPEN INV UI
+                        elif event.key == pygame.K_m:
+                            print(self.map)  # OPEN MAP UI
+                    elif self.state == STATES['inventory_ui']:
+                        if event.key == pygame.K_e:
+                            print(self.player.inventory)  # CLOSE INV UI
+                        elif event.key == pygame.K_m:
+                            print(self.map)  # OPEN MAP UI
+                    elif self.state == STATES['map_ui']:
+                        if event.key == pygame.K_e:
+                            print(self.player.inventory)  # OPEN INV UI
+                        elif event.key == pygame.K_m:
+                            print(self.map)  # CLOSE MAP UI
 
             clock.tick(self.FPS)
 
