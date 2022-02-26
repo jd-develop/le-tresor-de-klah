@@ -1,11 +1,21 @@
+== ORIGINAL IDEA ==
+Jean Dubois
+GitHub : https://github.com/jd-develop
+ItchIO : https://jd-dev.itch.io
+
 == DEV ==
 Jean Dubois
 
-== DESIGNERS ==
-Raitwag ce bg
+== DESIGN, SPRITES, ICONS ==
+Jean Dubois
+Raitwag  # D'ailleurs, il faut qu'il m'envoie le logo ce bg
 Stealthix : https://stealthix.itch.io/
 PixelCreations : https://pixelcreations.itch.io/
 Maschiat : maschiaT@wememo.art
+
+== TEST ==
+Jean Dubois
+Lolie lol
 
 == MUSIC ==
 CrystalZone : https://crystalzone.itch.io/
@@ -13,7 +23,7 @@ CrystalZone : https://crystalzone.itch.io/
 == FONT ==
 PixelFJVerdana par flashjunior sur 1001-fonts
 
-== CONLANGER (KLAH'S LANGUAGE) ==
+== CONLANG (KLAH LANGUAGE) ==
 Jean Dubois
 
 
