@@ -84,27 +84,28 @@ class Game:
     def update(self):
         self.group.update()
 
-        # vérification des collisions
-        for sprite in self.group.sprites():
-            if isinstance(sprite, player.Player):
-                # objets collisions
-                if sprite.feet.collidelist(self.walls) > -1:
-                    sprite.move_back()
-                # ITEMS
-                items_collided = sprite.rect.collidelistall(self.items)
-                if len(items_collided) > 0:
-                    indexes = []
-                    for item_idx in items_collided:
-                        item_ = self.items[item_idx]
-                        self.group.remove(item_)
-                        self.player.loot(item_.loot)
-                        loot = {}
-                        for loot_ in item_.loot:
-                            if item_.loot[loot_] != 0:
-                                loot[loot_] = item_.loot[loot_]
-                        self.last_action = ', '.join(f"{x} +{loot[x]}" for x in loot)
-                        indexes.append(item_idx)
-                    self.items = [e for i, e in enumerate(self.items) if i not in indexes]
+        if self.state == STATES["playing"]:
+            # vérification des collisions
+            for sprite in self.group.sprites():
+                if isinstance(sprite, player.Player):
+                    # objets collisions
+                    if sprite.feet.collidelist(self.walls) > -1:
+                        sprite.move_back()
+                    # ITEMS
+                    items_collided = sprite.rect.collidelistall(self.items)
+                    if len(items_collided) > 0:
+                        indexes = []
+                        for item_idx in items_collided:
+                            item_ = self.items[item_idx]
+                            self.group.remove(item_)
+                            self.player.loot(item_.loot)
+                            loot = {}
+                            for loot_ in item_.loot:
+                                if item_.loot[loot_] != 0:
+                                    loot[loot_] = item_.loot[loot_]
+                            self.last_action = ', '.join(f"{x} +{loot[x]}" for x in loot)
+                            indexes.append(item_idx)
+                        self.items = [e for i, e in enumerate(self.items) if i not in indexes]
 
     def handle_input(self):
         pressed = pygame.key.get_pressed()
@@ -138,13 +139,27 @@ class Game:
         clock = pygame.time.Clock()
 
         while running:
-            self.player.save_location()
-            self.handle_input()
-            self.update()
-            self.group.center(self.player.rect.center)
-            self.group.draw(self.screen)
-            self.screen.blit(self.pixel_verdana.render("Trésor de Klah " + self.version, False, (0, 0, 0)), (5, 0))
-            self.screen.blit(self.pixel_verdana.render(f"Last action: {self.last_action}", False, (0, 0, 0)), (5, 25))
+            if self.state == STATES['playing']:
+                self.player.save_location()
+                self.handle_input()
+                self.update()
+                self.group.center(self.player.rect.center)
+                self.group.draw(self.screen)
+                self.screen.blit(self.pixel_verdana.render("Trésor de Klah " + self.version, False, (0, 0, 0)), (5, 0))
+                self.screen.blit(self.pixel_verdana.render(f"Last action: {self.last_action}",
+                                                           False, (0, 0, 0)
+                                                           ),
+                                 (5, 25))
+            elif self.state == STATES["inventory_ui"]:
+                self.update()
+                self.group.center(self.player.rect.center)
+                self.group.draw(self.screen)
+                self.screen.blit(self.pixel_verdana.render("Trésor de Klah " + self.version, False, (0, 0, 0)), (5, 0))
+                self.screen.blit(self.pixel_verdana.render(f"Last action: {self.last_action}",
+                                                           False, (0, 0, 0)
+                                                           ),
+                                 (5, 25))
+
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -161,19 +176,19 @@ class Game:
                 elif event.type == pygame.KEYUP:
                     if self.state == STATES['playing']:
                         if event.key == pygame.K_e:
-                            print(self.player.inventory)  # OPEN INV UI
+                            self.state = STATES['inventory_ui']
                         elif event.key == pygame.K_m:
-                            print(self.map)  # OPEN MAP UI
+                            self.state = STATES['map_ui']
                     elif self.state == STATES['inventory_ui']:
                         if event.key == pygame.K_e:
-                            print(self.player.inventory)  # CLOSE INV UI
+                            self.state = STATES['playing']
                         elif event.key == pygame.K_m:
-                            print(self.map)  # OPEN MAP UI
+                            self.state = STATES['map_ui']
                     elif self.state == STATES['map_ui']:
                         if event.key == pygame.K_e:
-                            print(self.player.inventory)  # OPEN INV UI
+                            self.state = STATES['inventory_ui']
                         elif event.key == pygame.K_m:
-                            print(self.map)  # CLOSE MAP UI
+                            self.state = STATES['playing']
 
             clock.tick(self.FPS)
 
